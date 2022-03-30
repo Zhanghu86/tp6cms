@@ -38,3 +38,37 @@ function getShowUrl($v)
     }
     return $url ?? '';
 }
+
+/***
+ * 获取当前栏目ID
+ * @return mixed
+ */
+// function getCateId()
+// {
+//     if (\think\facade\Request::has('cate')) {
+//         $result = (int)\think\facade\Request::param('cate');
+//     } else {
+//         $cateFolder = get_cate_folder();
+//         if ($cateFolder) {
+//             $result = \app\common\model\Cate::where('cate_folder', '=', $cateFolder)->value('id');
+//         }
+//     }
+//     return $result ?? '';
+// }
+
+function getCateId()
+{
+    if (\think\facade\Request::has('cate')) {
+        $result = (int)\think\facade\Request::param('cate');
+    } else {
+        $result = \app\common\model\Cate::where('cate_folder', '=', \think\facade\Request::controller())
+            ->value('id');
+        if (!$result) {
+            $article = \app\common\model\Article::find(request()['id']);
+            if ($article) {
+                $result = $article->cate_id;
+            }
+        }
+    }
+    return $result;
+}
